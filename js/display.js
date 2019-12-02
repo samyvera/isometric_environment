@@ -33,7 +33,7 @@ class Display {
             var viewRadius = 8;
 
             //background
-            
+
             var viewPos = v3toV2(new Vector3D(player.pos.x, player.pos.y, 0));
 
             this.cx.translate(
@@ -82,16 +82,74 @@ class Display {
                 }
             }
 
+            //player shadow
+
+            var playerShadowPos = v3toV2(player.pos.plus(new Vector3D(0, 0, -player.distanceFromFloor)));
+
+            this.cx.drawImage(this.playerImg,
+                0,
+                this.scale * 1.5 * 8,
+                this.scale * 1.5,
+                this.scale * 1.5,
+                playerShadowPos.x * this.scale - this.scale / 2,
+                playerShadowPos.y * this.scale - this.scale * 0.625,
+                this.scale * 1.5,
+                this.scale * 1.5
+            );
+
             //player
 
             var playerPos = v3toV2(player.pos);
 
+            var playerFrameSpeed = 16;
+            var playerFrameLength = 4;
+            var yPos = 0;
+
+            if (player.direction.x === -0.5 && player.direction.y === 0.5) {
+                yPos = 0;
+            }
+            else if (player.direction.x === 0.5 && player.direction.y === -0.5) {
+                yPos = 1;
+            }
+            else if (player.direction.x === -0.5 && player.direction.y === -0.5) {
+                yPos = 2;
+            }
+            else if (player.direction.x === 0.5 && player.direction.y === 0.5) {
+                yPos = 3;
+            }
+
+            if (player.speed.x || player.speed.y) {
+                playerFrameSpeed = 12;
+                if (player.direction.x === 1 && player.direction.y === 0) {
+                    yPos = 6;
+                } else if (player.direction.x === 0 && player.direction.y === 1) {
+                    yPos = 6;
+                } else if (player.direction.x === -1 && player.direction.y === 0) {
+                    yPos = 5;
+                } else if (player.direction.x === 0 && player.direction.y === -1) {
+                    yPos = 5;
+                } else if (player.direction.x === 0.5 && player.direction.y === -0.5) {
+                    yPos = 7;
+                } else if (player.direction.x === -0.5 && player.direction.y === 0.5) {
+                    yPos = 4;
+                } else if (player.direction.x === 0.5 && player.direction.y === 0.5) {
+                    yPos = 6;
+                } else if (player.direction.x === -0.5 && player.direction.y === -0.5) {
+                    yPos = 5;
+                }
+            }
+
+            var xPos = Math.floor(this.frame / playerFrameSpeed) % playerFrameLength;
+
             this.cx.drawImage(this.playerImg,
-                0, 0,
-                this.scale, this.scale,
-                playerPos.x * this.scale,
-                playerPos.y * this.scale,
-                this.scale, this.scale
+                this.scale * 1.5 * xPos,
+                this.scale * 1.5 * yPos,
+                this.scale * 1.5,
+                this.scale * 1.5,
+                playerPos.x * this.scale - this.scale / 2,
+                playerPos.y * this.scale - this.scale * 0.625,
+                this.scale * 1.5,
+                this.scale * 1.5
             );
 
             this.cx.translate(
@@ -104,9 +162,14 @@ class Display {
             this.cx.fillStyle = "#fff";
             this.cx.font = 8 + "px consolas";
             this.cx.fillText(
-                "x:" + player.pos.x + " y:" + player.pos.y + " z:" + player.pos.z,
+                "posX:" + player.pos.x + " posY:" + player.pos.y + " posZ:" + player.pos.z,
                 2,
                 8
+            );
+            this.cx.fillText(
+                "dirX:" + player.direction.x + " dirY:" + player.direction.y,
+                2,
+                16
             );
 
             this.frame++;

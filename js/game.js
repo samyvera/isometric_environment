@@ -1,13 +1,26 @@
 class Game {
-    constructor(keys) {
+    constructor() {
         this.frame = 0;
 
-        this.keys = keys;
+        this.keys = {};
         this.lastKeys = {};
 
         this.scene = new Scene(OVERWORLD);
 
-        this.update = () => {
+        this.antiCheat = () => {
+            if (this.keys.up && this.keys.down) {
+                this.keys.up = false;
+                this.keys.down = false;
+            }
+            if (this.keys.left && this.keys.right) {
+                this.keys.left = false;
+                this.keys.right = false;
+            }
+        }
+        
+        this.update = keys => {
+            this.keys = JSON.parse(JSON.stringify(keys));
+            this.antiCheat();
 
             this.scene.update(this);
 
